@@ -1,0 +1,19 @@
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "assets": ["**/*.json"],
+    "watchAssets": true
+  },
+  "projects": {
+    "http-infra-lib": {
+      "type": "library",
+      "root": "libs/http-infra-lib",
+      "entryFile": "index",
+      "sourceRoot": "libs/http-infra-lib/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/http-infra-lib/tsconfig.lib.json"
+      }
+    }
+  }
+}
