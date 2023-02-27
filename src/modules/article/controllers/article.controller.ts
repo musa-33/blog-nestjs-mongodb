@@ -22,6 +22,14 @@ export class ArticleController{
     private readonly likesService: LikesService,
     private readonly userService: UserService
   ){}
+
+  @Get('search')
+  async searchForArticles(
+    @Query('text') text: string
+  ): Promise<SuccessResponse<any>>{
+    const articles = await this.articleService.searchForArticles(text)
+    return ResponseUtil.success(articles, 'Elastic Search')
+  }
   
   @Get('dashboard')
   async getAllArticleUserLiked(

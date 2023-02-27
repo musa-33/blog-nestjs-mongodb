@@ -18,7 +18,7 @@ export default class ArticleSearchService {
     return this.elasticsearchService.index<ArticleSearchResult, ArticleSearchBody>({
       index: this.index,
       body: {
-        _id: article._id.toString(),
+        id: article._id.toString(),
         title: article.title,
         content: article.content,
         user: article.user
@@ -33,52 +33,12 @@ export default class ArticleSearchService {
         query: {
           multi_match: {
             query: text,
-            fields: ['title', 'content']
+            fields: ['title', 'content' ]
           }
         }
       }
     })
     const hits = body.hits.hits;
     return hits.map((item) => item._source);
-  }
-
-  async remove(articleId: number) {
-    this.elasticsearchService.deleteByQuery({
-      index: this.index,
-      body: {
-        query: {
-          match: {
-            id: articleId,
-          }
-        }
-      }
-    })
-  }
-
-  async update(article: Article) {
-    const newBody: ArticleSearchBody = {
-      _id: article._id.toString(),
-      title: article.title,
-      content: article.content,
-      user: article.user
-    }
-
-    const script = Object.entries(newBody).reduce((result, [key, value]) => {
-      return `${result} ctx._source.${key}='${value}';`;
-    }, '');
-
-    return this.elasticsearchService.updateByQuery({
-      index: this.index,
-      body: {
-        query: {
-          match: {
-            id: article._id.toString(),
-          }
-        },
-        script: {
-          inline: script
-        }
-      }
-    })
   }
 }

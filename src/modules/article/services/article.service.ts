@@ -13,7 +13,7 @@ export class ArticleService{
   constructor(
     // @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     private readonly articleRepository: ArticleRepository,
-    // private readonly articleSearchService: ArticleSearchService,
+    private readonly articleSearchService: ArticleSearchService,
   ){}
 
   async findArticles(userId: string, pagerDto: PagerDto, searchQuery: ArticleSearchDto): Promise<PagerResult<Article>>{    
@@ -22,7 +22,7 @@ export class ArticleService{
 
   async createArticle(createArticleDto: CreateArticleDto): Promise<Article>{
     const article = await this.articleRepository.createArticle(createArticleDto)
-    // this.articleSearchService.indexPost(article) 
+    this.articleSearchService.indexPost(article) 
     return article
   }
 
@@ -32,6 +32,18 @@ export class ArticleService{
 
   async updateNumberOfLikes(_id: string, likes: number): Promise<Article> {
     return await this.articleRepository.findOneAndUpdate({ _id }, { $inc: { likes } })
+  }
+
+  async searchForArticles(text: string) {
+    const results = await this.articleSearchService.search(text);
+    const ids = results.map(result => result.id);
+    if (!ids.length) {
+      return [];
+    }
+    return this.articleRepository
+      .find({
+        _id: { $in: ids }
+      });
   }
 
 }

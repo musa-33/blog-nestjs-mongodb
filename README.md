@@ -91,3 +91,7 @@ Here are the following endpoint,
 
 8. User Dashboard: 
   `/api/articles/dashboard` [GET]
+
+9. Elastic Search:
+  `/api/articles/search?text=anything on article title and content` [GET]
+  This search perform only for article title and content
