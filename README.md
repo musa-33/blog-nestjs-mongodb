@@ -30,7 +30,6 @@ JWT_EXPIRATION=6000
 JWT_SECRET=JWT_SECRET
 
 RABBIT_MQ_URI=amqp://localhost:5672
-RABBIT_MQ_NOTIFICATION_QUEUE=notification
 
 ELASTICSEARCH_NODE=http://localhost:9200
 ELASTICSEARCH_USERNAME=elastic
@@ -95,3 +94,4 @@ Here are the following endpoint,
 9. Elastic Search:
   `/api/articles/search?text=anything on article title and content` [GET]
   This search perform only for article title and content
+

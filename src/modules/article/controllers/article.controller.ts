@@ -61,7 +61,7 @@ export class ArticleController{
     @Query() searchQuery: ArticleSearchDto,
     @Query() pagerDto: PagerDto
   ): Promise<PagerResult<Article>>{
-    const { data, pagerOptions } = await this.articleService.findArticles(user._id, pagerDto, searchQuery)
+    const { data, pagerOptions } = await this.articleService.findArticles({ user: user._id, ...searchQuery }, pagerDto)
     return ResponseUtil.success(data, 'All articles', pagerOptions)
   }
 
@@ -94,16 +94,5 @@ export class ArticleController{
     await this.likesService.unLikeArticle(data._id)
     await this.articleService.updateNumberOfLikes(_id, -1)
     return ResponseUtil.success(null, 'unLiked successfully')
-  }
-
-  @Get(':_id')
-  async getAllLikeOnArticle(
-    @Param() _id: string
-  ){
-    const data = await this.likesService.getAllLikeOnArticle(_id)
-    return {
-      count: data.length,
-      data
-    }
   }
 }

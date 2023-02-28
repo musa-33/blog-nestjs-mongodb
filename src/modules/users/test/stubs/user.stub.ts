@@ -1,11 +1,8 @@
-import { User } from "@modules/users/schemas/user.schema"
-import { Types } from "mongoose"
-
-export const userStub = (): User => {
+export const userStub = (): any => {
   return {
-    _id: new Types.ObjectId(),
+    _id: '63fba375f7559318141d9d8b',
     email: 'test@example.com',
     name: 'test',
-    password: 'Test@1234'
+    password: 'Testpass@123'
   }
 }

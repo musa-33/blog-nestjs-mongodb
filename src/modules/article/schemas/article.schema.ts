@@ -1,10 +1,13 @@
 import { User } from '@modules/users/schemas/user.schema';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Date } from 'mongoose';
+import { SchemaTypes, Types } from 'mongoose';
 import { AbstractDocument } from '../../database/abstract.schema';
 
 @Schema({ versionKey: false})
-export class Article extends AbstractDocument {
+export class Article {
+  @Prop({ type: SchemaTypes.ObjectId })
+  _id: Types.ObjectId;
+
   @Prop({required: true})
   title: string
 
@@ -23,7 +26,6 @@ export class Article extends AbstractDocument {
   @Prop({ type: String, ref: 'User' })
   user: User | string;
 
-  
 }
 
 export const ArticleSchema = SchemaFactory.createForClass(Article);

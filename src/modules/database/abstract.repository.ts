@@ -1,6 +1,7 @@
 import { PagerDto } from '@lib/http-infra-lib/dtos/pager.dto';
 import { BasePagination } from '@lib/http-infra-lib/response/base-pagination';
 import { PagerResult } from '@lib/http-infra-lib/response/pager-result.interface';
+import { User } from '@modules/users/schemas/user.schema';
 import { Logger, NotFoundException } from '@nestjs/common';
 import { FilterQuery, Model, Types, UpdateQuery } from 'mongoose';
 import { filter } from 'rxjs';

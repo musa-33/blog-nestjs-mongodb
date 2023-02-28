@@ -1,29 +1,34 @@
-import { Injectable, NotFoundException, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common'
+import { Injectable, Logger, NotFoundException, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common'
 import { CreateUserDto } from '../dtos/user-create.dto';
 import { UsersRepository } from '../repositories/user.repository';
 import { User } from '../schemas/user.schema';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserDto } from '../dtos/user-update.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { FilterQuery, Model, Types, UpdateQuery } from 'mongoose';
 
 @Injectable()
 export class UserService {
+  private logger = new Logger(UserService.name)
   constructor(
-    private readonly usersRepository: UsersRepository,
+    // private readonly usersRepository: UsersRepository,
     @InjectModel(User.name) private readonly userModel: Model<User>
   ) { }
 
   async createUser(createUserDto: CreateUserDto) {
     await this.validateCreateUserData(createUserDto);
-    const userDocument = await this.usersRepository.create({...createUserDto});
-    return userDocument
+    let createdDocument =await this.userModel.create({
+      ...createUserDto,
+      _id: new Types.ObjectId(),
+    });
+    createdDocument = (createdDocument as any).toObject();
+    return { ...createdDocument }
   }
 
   private async validateCreateUserData(createUserDto: CreateUserDto) {
     let user: User;
     try {
-      user = await this.usersRepository.findOne({
+      user = await this.findUser({
         email: createUserDto.email,
       });
     } catch (err) { }
@@ -33,7 +38,7 @@ export class UserService {
   }
 
   async validateUser(email: string, password: string) {
-    const userDocument = await this.usersRepository.findOne({ email });
+    const userDocument = await this.findUser({ email });
     const passwordIsValid = await bcrypt.compare(
       password,
       userDocument.password,
@@ -44,10 +49,11 @@ export class UserService {
     return userDocument
   }
 
-  async findUser(email: string): Promise<User>{
-    const user = await this.usersRepository.findOne({email})
+  async findUser(filterQuery: FilterQuery<User>): Promise<User>{
+    const user = await this.userModel.findOne(filterQuery)
     if (!user) {
-      throw new NotFoundException('User not found.');
+      this.logger.warn('Document not found with filterQuery', filterQuery);
+      throw new NotFoundException('Document not found.');
     }
     return user
   }
@@ -61,7 +67,25 @@ export class UserService {
   }
 
   async updateUser(_id: string, updateUserDto: UpdateUserDto): Promise<User>{
-    const user = await this.usersRepository.findOne({_id})
-    return await this.usersRepository.findOneAndUpdate({_id}, {...user, ...updateUserDto})
+    let createdDocument = await this.findUser({_id})
+    createdDocument = (createdDocument as any).toObject();
+    
+    return await this.findAndUpdate({ _id }, { ...createdDocument, ...updateUserDto})
+  }
+
+  async findAndUpdate(
+    filterQuery: FilterQuery<User>,
+    update: UpdateQuery<User>,
+  ) {
+    const document = await this.userModel.findOneAndUpdate(filterQuery, update, {
+      lean: true,
+      new: true,
+    });
+
+    if (!document) {
+      this.logger.warn(`Document not found with filterQuery:`, filterQuery);
+      throw new NotFoundException('Document not found.');
+    }
+    return document;
   }
 }

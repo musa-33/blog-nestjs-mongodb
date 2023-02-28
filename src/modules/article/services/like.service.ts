@@ -28,23 +28,9 @@ export class LikesService {
     return data
   }
 
-  async getAllLikeOnArticle(article: string): Promise<Like[]> {
-    const data =  await this.likeModel.find({ article }).populate({ path: 'user article', select: `${SELECT} -user` }).select(SELECT)
-    if (data && data.length == 0) throw new NotFoundException(`there is no like with this article = ${article}`);
-    return data
-  }
-
   async getAllArticleUserLiked(user: string): Promise<Like[]> {
     const data =  await this.likeModel.find({ user }).populate({ path: 'article', select: `${SELECT} -user` }).select(SELECT)
     if (data && data.length == 0) throw new NotFoundException(`there is no article that user liked.`);
     return data
-  }
-  
-  async getLikeByArticleId(article: string): Promise<Like> {
-    return await this.likeModel.findOne({ article })
-  }
-
-  async getLikeByUserId(user: string): Promise<Like> {
-    return await this.likeModel.findOne({ user })
   }
 }
