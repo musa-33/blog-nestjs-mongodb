@@ -4,6 +4,7 @@
 - [Configuration Setup](#configuration-setup)
 - [Starting backend server](#starting-backend-server)
 - [Api Documentation](#api-documentation)
+- [Unit Test](#unit-test)
 
 ## Dev environment setup
 
@@ -95,3 +96,9 @@ Here are the following endpoint,
   `/api/articles/search?text=anything on article title and content` [GET]
   This search perform only for article title and content
 
+
+### Unit Test
+
+To run unit test run the command bellow,
+
+  `npm test`
