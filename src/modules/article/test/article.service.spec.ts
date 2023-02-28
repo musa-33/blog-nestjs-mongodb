@@ -103,11 +103,11 @@ describe('ArticleService', () => {
           pageNumber: 1
         }
         jest.spyOn(articleService, 'findArticles')
-        article = await articleService.findArticles(articleStub().user, pagerDto, searchQuery)
+        article = await articleService.findArticles({ user: articleStub().user, ...searchQuery}, pagerDto)
       })
 
       test('then it should call articleModel', () => {
-        expect(articleService.findArticles).toBeCalledWith(articleStub().user, pagerDto, searchQuery);
+        expect(articleService.findArticles).toBeCalledWith({ user: articleStub().user, ...searchQuery }, pagerDto);
       })
 
       test('then is should return a articles', () => {
